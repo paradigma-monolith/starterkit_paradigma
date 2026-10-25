@@ -55,7 +55,6 @@ const isExpanded = ref(false);
 const isMuted = ref(false);
 const inputMessage = ref('');
 const isSending = ref(false);
-const isTriggeringBot = ref(false);
 const sendError = ref('');
 const unreadCount = ref(0);
 const messages = ref([]);
@@ -73,13 +72,6 @@ const getCsrfToken = () => {
   }
   return '';
 };
-
-const quickReplies = [
-  '👋 Halo tim Hybrid Laravel!',
-  '🚀 Reverb WebSocket berjalan sub-10ms!',
-  '⚡ Arsitektur modular siap digunakan.',
-  '📦 Coba input produk baru.'
-];
 
 // Play a synthesized chime using Web Audio API
 const playChime = () => {
@@ -226,40 +218,6 @@ const sendMessage = async (textToSend = null) => {
     console.error('[FloatingChat] Send error:', e);
   } finally {
     isSending.value = false;
-  }
-};
-
-// Trigger automated bot reply to test real-time reception in 1 window
-const triggerDemoReply = async () => {
-  if (isTriggeringBot.value) return;
-  isTriggeringBot.value = true;
-  sendError.value = '';
-
-  try {
-    const token = getCsrfToken();
-    const res = await fetch(getUrl('/chat/demo-reply'), {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token,
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json',
-      },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data.message && !messages.value.some(m => m.id === data.message.id)) {
-        messages.value.push(data.message);
-        scrollToBottom();
-        playChime();
-      }
-    }
-  } catch (e) {
-    console.warn('[FloatingChat] Demo bot reply error:', e);
-  } finally {
-    isTriggeringBot.value = false;
   }
 };
 
@@ -421,27 +379,13 @@ onUnmounted(() => {
                 </div>
               </div>
             </div>
-
-            <!-- Instant Demo Bot Reply Trigger -->
-            <div class="mt-2 pt-2 border-t border-indigo-900/40 flex items-center justify-between">
-              <span class="text-[10px] text-slate-400">Uji pesan real-time otomatis:</span>
-              <button
-                type="button"
-                @click="triggerDemoReply"
-                :disabled="isTriggeringBot"
-                class="px-2 py-0.5 text-[10px] font-semibold rounded bg-cyan-950 text-cyan-300 hover:bg-cyan-900 border border-cyan-800/80 transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
-              >
-                <Bot class="w-3 h-3 text-cyan-400" />
-                <span>{{ isTriggeringBot ? 'Mengirim...' : '⚡ Tes Balas Otomatis' }}</span>
-              </button>
-            </div>
           </div>
 
           <!-- Empty State -->
           <div v-if="messages.length === 0" class="py-12 text-center text-slate-500">
-            <Bot class="w-8 h-8 mx-auto mb-2 text-slate-600" />
+            <MessageSquare class="w-8 h-8 mx-auto mb-2 text-slate-600" />
             <p class="text-xs font-medium">Belum ada obrolan.</p>
-            <p class="text-[10px] text-slate-600 mt-0.5">Ketik pesan pertama Anda di bawah ini!</p>
+            <p class="text-[10px] text-slate-600 mt-0.5">Kirim pesan pertama Anda kepada tim!</p>
           </div>
 
           <!-- Messages Stream -->
@@ -489,19 +433,6 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Quick Replies Chips -->
-        <div class="px-3 py-1.5 bg-slate-900/90 border-t border-slate-800/80 overflow-x-auto flex items-center gap-1.5 scrollbar-none">
-          <button
-            v-for="(chip, index) in quickReplies"
-            :key="index"
-            type="button"
-            @click="sendMessage(chip)"
-            class="flex-shrink-0 text-[10px] px-2 py-0.5 rounded-full bg-slate-800/80 hover:bg-indigo-950 hover:text-indigo-200 border border-slate-700 hover:border-indigo-700/60 text-slate-300 transition-all cursor-pointer whitespace-nowrap"
-          >
-            {{ chip }}
-          </button>
         </div>
 
         <!-- Send Error Alert Banner -->

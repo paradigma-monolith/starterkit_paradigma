@@ -26,9 +26,6 @@ import {
   FlaskConical,
   Rocket
 } from 'lucide-vue-next';
-import { useAppMode } from '../composables/useAppMode';
-
-const { appMode, toggleMode } = useAppMode();
 
 const props = defineProps({
   mode: {
@@ -143,176 +140,37 @@ const handleLogout = () => {
 };
 
 const navSections = computed(() => {
-  if (appMode.value === 'production') {
-    return [
-      {
-        title: 'Pusat Kontrol',
-        items: [
-          {
-            name: 'Pusat Dashboard',
-            path: '/inertia/dashboard',
-            url: getUrl('/inertia/dashboard'),
-            icon: LayoutDashboard,
-            active: !isSpa.value && props.currentRoute === 'dashboard',
-            badge: 'Utama',
-            badgeColor: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-          },
-          {
-            name: 'Arsitektur Hub',
-            path: '/',
-            url: getUrl('/'),
-            icon: Home,
-            active: props.currentRoute === 'hub',
-            badge: 'Core',
-            badgeColor: 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
-          },
-        ],
-      },
-      {
-        title: 'Operasional Sistem',
-        items: [
-          {
-            name: 'Katalog Data Master',
-            path: '/inertia/products',
-            url: getUrl('/inertia/products'),
-            icon: Boxes,
-            active: !isSpa.value && props.currentRoute === 'products',
-            badge: 'Data',
-            badgeColor: 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
-          },
-        ],
-      },
-      {
-        title: 'Enterprise & Tata Kelola',
-        items: [
-          {
-            name: 'Audit Trail Logs',
-            path: '/audit-logs',
-            url: getUrl('/audit-logs'),
-            icon: History,
-            active: props.currentRoute === 'audit',
-            badge: 'Spatie',
-            badgeColor: 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
-          },
-          {
-            name: 'Profil & Keamanan',
-            path: '/profile',
-            url: getUrl('/profile'),
-            icon: UserIcon,
-            active: props.currentRoute === 'profile',
-            badge: 'RBAC',
-            badgeColor: 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-          },
-        ],
-      },
-      {
-        title: 'DevTools & Monitoring',
-        items: [
-          {
-            name: 'Scramble API Docs',
-            path: '/docs/api',
-            url: getUrl('/docs/api'),
-            icon: BookOpen,
-            external: true,
-            badge: 'OpenAPI',
-            badgeColor: 'bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
-          },
-          {
-            name: 'Laravel Pulse',
-            path: '/pulse',
-            url: getUrl('/pulse'),
-            icon: Activity,
-            external: true,
-            badge: 'Metrics',
-            badgeColor: 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
-          },
-        ],
-      },
-    ];
-  }
-
-  // Mode Demo (Showcase full playground modules)
   return [
     {
       title: 'Pusat Kontrol',
       items: [
         {
-          name: 'Arsitektur Hub',
-          path: '/',
-          url: getUrl('/'),
-          icon: Home,
-          active: props.currentRoute === 'hub',
-          badge: 'Core',
-          badgeColor: 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
-        },
-      ],
-    },
-    {
-      title: 'Inertia.js Monolith',
-      items: [
-        {
-          name: 'Dashboard',
+          name: 'Pusat Dashboard',
           path: '/inertia/dashboard',
           url: getUrl('/inertia/dashboard'),
           icon: LayoutDashboard,
-          active: !isSpa.value && props.currentRoute === 'dashboard',
-          badge: 'SSR',
-          badgeColor: 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
-        },
-        {
-          name: 'Demo MapLibre GL',
-          path: '/inertia/map-demo',
-          url: getUrl('/inertia/map-demo'),
-          icon: Globe,
-          active: !isSpa.value && (props.currentRoute === 'map' || props.currentRoute === 'map.demo'),
-          badge: 'WebGL',
-          badgeColor: 'bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
-        },
-        {
-          name: 'Katalog Produk',
-          path: '/inertia/products',
-          url: getUrl('/inertia/products'),
-          icon: Boxes,
-          active: !isSpa.value && props.currentRoute === 'products',
-          badge: 'CRUD',
+          active: !isSpa.value && (props.currentRoute === 'dashboard' || props.currentRoute === 'home'),
+          badge: 'Utama',
           badgeColor: 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
         },
       ],
     },
     {
-      title: 'Vue 3 SPA Mode',
+      title: 'Single Page App',
       items: [
         {
-          name: 'SPA Home',
+          name: 'Dashboard (SPA)',
           path: '/spa',
           url: getUrl('/spa'),
-          icon: Sparkles,
-          active: isSpa.value && props.currentRoute === 'home',
-          badge: 'Vite',
-          badgeColor: 'bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
-        },
-        {
-          name: 'SPA Produk',
-          path: '/spa/products',
-          url: getUrl('/spa/products'),
-          icon: ShoppingBag,
-          active: isSpa.value && props.currentRoute === 'products',
-          badge: 'REST',
-          badgeColor: 'bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
-        },
-        {
-          name: 'API Explorer',
-          path: '/spa/api-explorer',
-          url: getUrl('/spa/api-explorer'),
-          icon: Compass,
-          active: isSpa.value && props.currentRoute === 'api-explorer',
+          icon: Layers,
+          active: isSpa.value,
           badge: 'Client',
-          badgeColor: 'bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
+          badgeColor: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
         },
       ],
     },
     {
-      title: 'Enterprise & Tata Kelola',
+      title: 'Tata Kelola & Keamanan',
       items: [
         {
           name: 'Audit Trail Logs',
@@ -335,7 +193,7 @@ const navSections = computed(() => {
       ],
     },
     {
-      title: 'Telemetri & DevTools',
+      title: 'DevTools & Monitoring',
       items: [
         {
           name: 'Scramble API Docs',

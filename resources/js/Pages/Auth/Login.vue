@@ -45,18 +45,6 @@ const submit = () => {
     },
   });
 };
-
-const fillDemoCredentials = () => {
-  form.email = 'admin@hybrid.local';
-  form.password = 'password';
-  form.clearErrors();
-};
-
-const fillStaffCredentials = () => {
-  form.email = 'staff@hybrid.local';
-  form.password = 'password';
-  form.clearErrors();
-};
 </script>
 
 <template>
@@ -200,42 +188,6 @@ const fillStaffCredentials = () => {
           </button>
         </form>
 
-        <!-- Demo Account Auto-Fill Helper -->
-        <div class="mt-6 pt-6 border-t border-slate-800/80">
-          <div class="p-3.5 rounded-2xl bg-indigo-950/30 border border-indigo-800/40 hover:border-indigo-600/60 transition-all">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-1.5 text-xs font-semibold text-indigo-300">
-                <Sparkles class="w-3.5 h-3.5 text-amber-400" />
-                <span>Pilih Akun Demo Otomatis</span>
-              </div>
-            </div>
-
-            <!-- 2-Option Button Grid -->
-            <div class="grid grid-cols-2 gap-2 mb-2.5">
-              <button
-                type="button"
-                @click="fillDemoCredentials"
-                class="px-2.5 py-1.5 text-[11px] font-semibold rounded-xl bg-indigo-600/30 hover:bg-indigo-600/60 text-indigo-200 border border-indigo-500/40 transition-all text-left flex flex-col cursor-pointer"
-              >
-                <span>👑 Super Admin</span>
-                <span class="text-[9px] font-mono text-indigo-300 font-normal">admin@hybrid.local</span>
-              </button>
-
-              <button
-                type="button"
-                @click="fillStaffCredentials"
-                class="px-2.5 py-1.5 text-[11px] font-semibold rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-200 border border-emerald-700/50 transition-all text-left flex flex-col cursor-pointer"
-              >
-                <span>💼 Staff Operator</span>
-                <span class="text-[9px] font-mono text-emerald-300 font-normal">staff@hybrid.local</span>
-              </button>
-            </div>
-
-            <div class="font-mono text-[10px] text-slate-400 text-center">
-              Password default: <span class="text-white font-bold">password</span>
-            </div>
-          </div>
-        </div>
 
       </div>
 

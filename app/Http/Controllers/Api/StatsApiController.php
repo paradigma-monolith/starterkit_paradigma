@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\LoginHistory;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Permission\Models\Role;
 
 class StatsApiController extends Controller
 {
@@ -26,13 +29,10 @@ class StatsApiController extends Controller
                 ],
             ],
             'metrics' => [
-                'total_products' => Product::count(),
-                'total_stock' => Product::sum('stock'),
-                'by_channel' => [
-                    'Inertia Bridge' => Product::where('created_by_channel', 'Inertia Bridge')->count(),
-                    'SPA API' => Product::where('created_by_channel', 'SPA API')->count(),
-                    'System' => Product::where('created_by_channel', 'System')->count(),
-                ],
+                'total_users' => User::count(),
+                'total_roles' => class_exists(Role::class) ? Role::count() : 3,
+                'total_activities' => Activity::count(),
+                'total_login_sessions' => LoginHistory::count(),
             ],
             'server' => [
                 'php_version' => PHP_VERSION,
@@ -44,27 +44,21 @@ class StatsApiController extends Controller
                     'installed' => class_exists(\Laravel\Octane\Octane::class),
                     'server' => config('octane.server', 'roadrunner'),
                     'in_octane' => isset($_SERVER['LARAVEL_OCTANE']),
-                    'description' => 'In-Memory Framework Execution via RoadRunner (rr.exe)',
                 ],
                 'redis' => \App\Services\RedisService::getTelemetry(),
                 'sentry' => [
                     'installed' => class_exists(\Sentry\Laravel\Integration::class),
                     'configured' => !empty(config('sentry.dsn')),
-                    'environment' => config('sentry.environment', config('app.env')),
-                    'description' => 'Full-Stack Error Monitoring, Browser Tracing & Session Replay',
                 ],
                 'pulse' => [
                     'installed' => class_exists(\Laravel\Pulse\Pulse::class),
                     'enabled' => config('pulse.enabled', true),
                     'path' => config('pulse.path', 'pulse'),
-                    'description' => 'Real-Time Health Monitoring, Slow Queries & Server Metrics',
                 ],
                 'reverb' => [
                     'installed' => class_exists(\Laravel\Reverb\ReverbServiceProvider::class),
                     'broadcaster' => config('broadcasting.default'),
-                    'host' => config('reverb.servers.reverb.hostname') ?: config('reverb.servers.reverb.host', 'localhost'),
                     'port' => config('reverb.servers.reverb.port', 8080),
-                    'description' => 'First-Party High-Speed WebSocket Server & Echo',
                 ],
             ],
         ]);

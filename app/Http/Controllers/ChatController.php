@@ -45,8 +45,8 @@ class ChatController extends Controller
 
         $message = ChatMessage::create([
             'user_id' => $user?->id,
-            'user_name' => $user?->name ?? 'Pengunjung',
-            'user_avatar' => $user?->avatar_url ?? 'https://ui-avatars.com/api/?name=Guest&background=6366f1&color=fff',
+            'user_name' => $user?->name ?? 'Pengguna',
+            'user_avatar' => $user?->avatar_url ?? 'https://ui-avatars.com/api/?name=User&background=6366f1&color=fff',
             'message' => trim($request->input('message')),
         ]);
 
@@ -55,46 +55,6 @@ class ChatController extends Controller
             broadcast(new ChatMessageSent($message))->toOthers();
         } catch (\Throwable $e) {
             Log::warning('[Reverb Broadcast] Server Reverb belum aktif: ' . $e->getMessage());
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => [
-                'id' => $message->id,
-                'user_id' => $message->user_id,
-                'user_name' => $message->user_name,
-                'user_avatar' => $message->user_avatar,
-                'message' => $message->message,
-                'created_at' => $message->created_at->format('H:i'),
-            ],
-        ]);
-    }
-
-    /**
-     * Dispatch an automated instant bot reply for testing real-time WebSocket reception.
-     */
-    public function demoReply(): JsonResponse
-    {
-        $sampleReplies = [
-            'Halo! Laravel Reverb menyiarkan pesan ini secara real-time via WebSocket 🚀',
-            'Sub-10ms response time tercapai dengan arsitektur hybrid modern! ⚡',
-            'Sistem starter kit hybrid siap digunakan untuk modul enterprise apapun. 👍',
-            'Pesan ini tersimpan di MySQL sekaligus disiarkan ke channel "chat-channel". ✨',
-        ];
-
-        $replyText = $sampleReplies[array_rand($sampleReplies)];
-
-        $message = ChatMessage::create([
-            'user_id' => null,
-            'user_name' => 'Reverb Bot (Auto)',
-            'user_avatar' => 'https://ui-avatars.com/api/?name=Reverb+Bot&background=10b981&color=fff',
-            'message' => $replyText,
-        ]);
-
-        try {
-            broadcast(new ChatMessageSent($message));
-        } catch (\Throwable $e) {
-            Log::warning('[Reverb Broadcast Demo] Server Reverb belum aktif: ' . $e->getMessage());
         }
 
         return response()->json([

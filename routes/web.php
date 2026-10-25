@@ -5,7 +5,6 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\Inertia\DashboardController;
-use App\Http\Controllers\Inertia\ProductInertiaController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 | Enterprise Master Boilerplate Routes:
 | 1. Guest Authentication & Password Reset Routes
 | 2. Logout Route (GET & POST)
-| 3. Protected Hub, Inertia, Profile, Audit Log, Export, and SPA Routes
+| 3. Protected Dashboard, Profile, Audit Log, Export, and SPA Routes
 */
 
 // --- Guest Authentication Routes ---
@@ -37,19 +36,14 @@ Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->nam
 
 // --- Protected Enterprise Routes (Requires Authentication) ---
 Route::middleware('auth')->group(function () {
-    // Central Hybrid Hub (Protected post-login landing)
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
+    // Primary Dashboard (Landing post-login)
+    Route::get('/', [DashboardController::class, 'dashboard'])->name('home');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     // Inertia.js Bridge Routes
     Route::prefix('inertia')->name('inertia.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-        Route::get('/map-demo', [DashboardController::class, 'mapDemo'])->name('map.demo');
-        Route::get('/products', [ProductInertiaController::class, 'index'])->name('products.index');
-        Route::post('/products', [ProductInertiaController::class, 'store'])->name('products.store');
-        Route::delete('/products/{product}', [ProductInertiaController::class, 'destroy'])->name('products.destroy');
     });
-
-    Route::get('/map-demo', [DashboardController::class, 'mapDemo'])->name('map');
 
     // Profile & Account Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -60,25 +54,23 @@ Route::middleware('auth')->group(function () {
     // System Activity & Audit Trail
     Route::get('/audit-logs', [ActivityLogController::class, 'index'])->name('audit.index');
 
-    // Data Exports (Excel, CSV, PDF)
-    Route::prefix('exports/products')->name('exports.products.')->group(function () {
+    // System Data Exports (Excel, CSV, PDF)
+    Route::prefix('exports/audit-logs')->name('exports.audit.')->group(function () {
         Route::get('/excel', [ExportController::class, 'exportExcel'])->name('excel');
         Route::get('/csv', [ExportController::class, 'exportCsv'])->name('csv');
         Route::get('/pdf', [ExportController::class, 'exportPdf'])->name('pdf');
     });
 
-    // In-App & Real-Time Notifications
+    // In-App & Real-Time Notifications (Reverb WebSocket Powered)
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('readAll');
-        Route::post('/demo', [NotificationController::class, 'sendDemo'])->name('demo');
     });
 
     // Real-Time Live Chat (Reverb WebSocket Powered)
     Route::get('/chat/messages', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
     Route::post('/chat/messages', [\App\Http\Controllers\ChatController::class, 'send'])->name('chat.send');
-    Route::post('/chat/demo-reply', [\App\Http\Controllers\ChatController::class, 'demoReply'])->name('chat.demoReply');
 
     // Traditional SPA Host Route
     Route::get('/spa/{any?}', function () {

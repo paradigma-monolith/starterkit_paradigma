@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\ActivityLogApiController;
-use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ProfileApiController;
 use App\Http\Controllers\Api\StatsApiController;
 use App\Http\Controllers\ExportController;
@@ -18,16 +17,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function () {
-    // Public telemetry stats
+    // Public telemetry & system stats for SPA
     Route::get('/stats', [StatsApiController::class, 'index']);
 
-    // Products API
-    Route::apiResource('products', ProductApiController::class);
-
-    // Exports API
-    Route::get('/exports/products/excel', [ExportController::class, 'exportExcel']);
-    Route::get('/exports/products/csv', [ExportController::class, 'exportCsv']);
-    Route::get('/exports/products/pdf', [ExportController::class, 'exportPdf']);
+    // Exports API (Audit Logs)
+    Route::get('/exports/audit-logs/excel', [ExportController::class, 'exportExcel']);
+    Route::get('/exports/audit-logs/csv', [ExportController::class, 'exportCsv']);
+    Route::get('/exports/audit-logs/pdf', [ExportController::class, 'exportPdf']);
 
     // Protected API Routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -45,6 +41,5 @@ Route::prefix('v1')->group(function () {
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
-        Route::post('/notifications/demo', [NotificationController::class, 'sendDemo']);
     });
 });

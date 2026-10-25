@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Product;
 use App\Models\User;
+use App\Notifications\SystemAlertNotification;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -26,7 +26,6 @@ class EnterpriseModulesTest extends TestCase
         $admin = User::where('email', 'admin@hybrid.local')->first();
         $this->assertNotNull($admin);
         $this->assertTrue($admin->hasRole('Super Admin'));
-        $this->assertTrue($admin->hasPermissionTo('manage products'));
 
         $staff = User::where('email', 'staff@hybrid.local')->first();
         $this->assertNotNull($staff);
@@ -34,30 +33,15 @@ class EnterpriseModulesTest extends TestCase
         $this->assertFalse($staff->hasPermissionTo('manage users'));
     }
 
-    public function test_product_mutations_are_logged_to_activity_log(): void
+    public function test_user_mutations_are_logged_to_activity_log(): void
     {
         $admin = User::where('email', 'admin@hybrid.local')->first();
 
-        $product = Product::create([
-            'name' => 'Audiophile Headphones',
-            'category' => 'Audio',
-            'price' => 199.99,
-            'stock' => 25,
-            'status' => 'in_stock',
-            'created_by_channel' => 'Inertia Bridge',
-        ]);
+        $admin->update(['name' => 'Super Admin Updated']);
 
         $this->assertDatabaseHas('activity_log', [
-            'log_name' => 'product',
-            'subject_id' => $product->id,
-            'event' => 'created',
-        ]);
-
-        $product->update(['price' => 179.99]);
-
-        $this->assertDatabaseHas('activity_log', [
-            'log_name' => 'product',
-            'subject_id' => $product->id,
+            'log_name' => 'user',
+            'subject_id' => $admin->id,
             'event' => 'updated',
         ]);
     }
@@ -70,14 +54,14 @@ class EnterpriseModulesTest extends TestCase
         $response->assertStatus(200);
 
         $updateResponse = $this->actingAs($user)->patch('/profile', [
-            'name' => 'Demo Super Admin Updated',
+            'name' => 'Super Admin Updated Profile',
             'email' => 'admin@hybrid.local',
         ]);
 
         $updateResponse->assertRedirect();
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
-            'name' => 'Demo Super Admin Updated',
+            'name' => 'Super Admin Updated Profile',
         ]);
     }
 
@@ -98,41 +82,38 @@ class EnterpriseModulesTest extends TestCase
         Storage::disk('public')->assertExists($user->avatar);
     }
 
-    public function test_export_endpoints_return_successful_downloads(): void
+    public function test_audit_log_export_endpoints_return_successful_downloads(): void
     {
         $user = User::where('email', 'admin@hybrid.local')->first();
 
-        Product::create([
-            'name' => 'Keyboard Mechanical',
-            'category' => 'Hardware',
-            'price' => 89.00,
-            'stock' => 10,
-            'status' => 'in_stock',
-            'created_by_channel' => 'System',
-        ]);
+        // Trigger an activity log entry
+        $user->update(['name' => 'Admin For Export']);
 
         // Excel
-        $excelResponse = $this->actingAs($user)->get('/exports/products/excel');
+        $excelResponse = $this->actingAs($user)->get('/exports/audit-logs/excel');
         $excelResponse->assertStatus(200);
-        $this->assertStringContainsString('products-', (string) $excelResponse->headers->get('content-disposition'));
+        $this->assertStringContainsString('audit-logs-', (string) $excelResponse->headers->get('content-disposition'));
 
         // CSV
-        $csvResponse = $this->actingAs($user)->get('/exports/products/csv');
+        $csvResponse = $this->actingAs($user)->get('/exports/audit-logs/csv');
         $csvResponse->assertStatus(200);
-        $this->assertStringContainsString('products-', (string) $csvResponse->headers->get('content-disposition'));
+        $this->assertStringContainsString('audit-logs-', (string) $csvResponse->headers->get('content-disposition'));
 
         // PDF
-        $pdfResponse = $this->actingAs($user)->get('/exports/products/pdf');
+        $pdfResponse = $this->actingAs($user)->get('/exports/audit-logs/pdf');
         $pdfResponse->assertStatus(200);
         $this->assertEquals('application/pdf', $pdfResponse->headers->get('content-type'));
     }
 
-    public function test_notification_flow_and_demo_dispatch(): void
+    public function test_notification_flow_and_mark_all_read(): void
     {
         $user = User::where('email', 'admin@hybrid.local')->first();
 
-        $demoResponse = $this->actingAs($user)->postJson('/api/v1/notifications/demo');
-        $demoResponse->assertStatus(200);
+        $user->notify(new SystemAlertNotification(
+            title: 'Pemberitahuan Sistem',
+            message: 'Aktivitas pengujian notifikasi.',
+            type: 'info'
+        ));
 
         $this->assertEquals(1, $user->unreadNotifications()->count());
 
@@ -166,11 +147,11 @@ class EnterpriseModulesTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_authenticated_user_can_access_map_demo_endpoint(): void
+    public function test_authenticated_user_can_access_audit_logs_endpoint(): void
     {
         $user = User::where('email', 'admin@hybrid.local')->first();
 
-        $response = $this->actingAs($user)->get('/inertia/map-demo');
+        $response = $this->actingAs($user)->get('/audit-logs');
         $response->assertStatus(200);
     }
 }

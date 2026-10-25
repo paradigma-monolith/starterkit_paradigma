@@ -12,6 +12,7 @@ use Tests\TestCase;
 class ChatTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_unauthenticated_user_cannot_access_chat(): void
     {
         $response = $this->getJson('/chat/messages');
@@ -98,36 +99,6 @@ class ChatTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['message']);
-    }
-
-    public function test_authenticated_user_can_trigger_demo_bot_reply(): void
-    {
-        Event::fake([ChatMessageSent::class]);
-
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->postJson('/chat/demo-reply');
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'status',
-                'message' => [
-                    'id',
-                    'user_name',
-                    'user_avatar',
-                    'message',
-                    'created_at',
-                ],
-            ]);
-
-        $this->assertDatabaseHas('chat_messages', [
-            'user_name' => 'Reverb Bot (Auto)',
-        ]);
-
-        Event::assertDispatched(ChatMessageSent::class, function ($event) {
-            return $event->chatMessage->user_name === 'Reverb Bot (Auto)'
-                && $event->broadcastAs() === 'chat.message';
-        });
     }
 
     public function test_staff_user_can_send_chat_message(): void

@@ -23,10 +23,6 @@ import {
 import AdminSidebar from './AdminSidebar.vue';
 import FloatingChat from './FloatingChat.vue';
 import ThemeSwitcher from './ThemeSwitcher.vue';
-import AppModeSwitcher from './AppModeSwitcher.vue';
-import { useAppMode } from '../composables/useAppMode';
-
-const { appMode, isDemo, isProduction } = useAppMode();
 
 const props = defineProps({
   mode: {
@@ -63,27 +59,15 @@ const activeNav = computed(() => {
   if (props.currentRoute) return props.currentRoute;
   if (typeof window === 'undefined') return '';
   const p = window.location.pathname;
-  if (p.includes('/spa/api-explorer')) return 'api-explorer';
-  if (p.includes('/spa/products')) return 'products';
-  if (p.endsWith('/spa') || p.endsWith('/spa/')) return 'home';
-  if (p.includes('/inertia/products')) return 'products';
-  if (p.includes('/inertia/dashboard')) return 'dashboard';
-  if (p.includes('/inertia/map-demo') || p.includes('/map-demo')) return 'map';
+  if (p.endsWith('/spa') || p.includes('/spa/')) return 'spa';
   if (p.includes('/audit-logs')) return 'audit';
   if (p.includes('/profile')) return 'profile';
-  if (p === '/' || p.endsWith('/public') || p.endsWith('/public/')) return 'hub';
+  if (p.includes('/inertia/dashboard') || p === '/' || p.endsWith('/public') || p.endsWith('/public/')) return 'dashboard';
   return '';
 });
 
-// Dynamic brand pill badge depending on context (Control Hub, SPA Mode, Inertia Bridge)
+// Dynamic brand pill badge depending on context (SPA Mode, Inertia Bridge)
 const brandBadge = computed(() => {
-  if (activeNav.value === 'hub') {
-    return {
-      text: 'Control Hub',
-      badgeClass: 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300',
-      iconClass: 'bg-gradient-to-tr from-indigo-600 via-purple-600 to-teal-400 shadow-indigo-500/20 group-hover:shadow-indigo-500/40',
-    };
-  }
   if (isSpa.value) {
     return {
       text: 'SPA Mode',
@@ -291,20 +275,6 @@ const showLiveToast = (notification) => {
   }, 5000);
 };
 
-const sendDemoNotification = async () => {
-  try {
-    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    await fetch(getUrl('/notifications/demo'), {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': token,
-        'Accept': 'application/json',
-      },
-    });
-    fetchNotifications();
-  } catch (e) {}
-};
-
 onMounted(() => {
   fetchNotifications();
 
@@ -395,238 +365,39 @@ const handleLogout = () => {
           </a>
         </div>
 
-        <!-- Navigation Links (Streamlined with Dropdowns) -->
-        <nav class="hidden lg:flex items-center gap-1 xl:gap-1.5 text-xs font-medium shrink-0">
-          <!-- Hub link -->
-          <a :href="getUrl('/')" 
-            @click="handleNav('/', $event)"
-            class="px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-            :class="activeNav === 'hub' ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'">
-            <Home class="w-3.5 h-3.5" />
-            <span>Hub</span>
+        <!-- Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1.5 text-xs font-medium shrink-0">
+          <!-- Dashboard link -->
+          <a :href="getUrl('/inertia/dashboard')" 
+            @click="handleNav('/inertia/dashboard', $event)"
+            class="px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer font-medium"
+            :class="(!isSpa && (activeNav === 'dashboard' || activeNav === 'home')) ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'">
+            <LayoutDashboard class="w-3.5 h-3.5 text-indigo-500" />
+            <span>Dashboard</span>
           </a>
 
-          <!-- 1. Inertia Bridge Dropdown -->
-          <div class="relative" ref="inertiaDropdownRef">
-            <button
-              type="button"
-              @click="toggleInertiaDropdown"
-              class="px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer font-medium select-none"
-              :class="[
-                isInertiaActive 
-                  ? 'bg-indigo-100 dark:bg-indigo-600/20 text-indigo-700 dark:text-indigo-300 font-semibold ring-1 ring-indigo-300 dark:ring-indigo-500/40' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
-                inertiaDropdownOpen ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : ''
-              ]"
-              :aria-expanded="inertiaDropdownOpen"
-              aria-haspopup="true"
-            >
-              <div class="w-1.5 h-1.5 rounded-full" :class="isInertiaActive ? 'bg-indigo-500 animate-pulse' : 'bg-slate-400/60 dark:bg-slate-600'"></div>
-              <span>Inertia Bridge</span>
-              <ChevronDown class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': inertiaDropdownOpen }" />
-            </button>
+          <!-- Audit Trail link -->
+          <a :href="getUrl('/audit-logs')" 
+            @click="handleNav('/audit-logs', $event)"
+            class="px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer font-medium"
+            :class="(!isSpa && activeNav === 'audit') ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'">
+            <History class="w-3.5 h-3.5 text-purple-500" />
+            <span>Audit Trail</span>
+          </a>
 
-            <!-- Inertia Dropdown Menu -->
-            <Transition
-              enter-active-class="transition duration-150 ease-out"
-              enter-from-class="transform opacity-0 scale-95 -translate-y-1"
-              enter-to-class="transform opacity-100 scale-100 translate-y-0"
-              leave-active-class="transition duration-100 ease-in"
-              leave-from-class="transform opacity-100 scale-100 translate-y-0"
-              leave-to-class="transform opacity-0 scale-95 -translate-y-1"
-            >
-              <div
-                v-if="inertiaDropdownOpen"
-                class="absolute left-0 mt-2 w-72 bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl p-2 z-50 text-slate-800 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5"
-              >
-                <div class="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800/80 mb-1 flex items-center justify-between">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 font-mono">
-                    Inertia.js Monolith
-                  </span>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 font-mono">
-                    SSR/CSR
-                  </span>
-                </div>
+          <!-- Visual Divider -->
+          <div class="h-4 w-[1px] bg-slate-300 dark:bg-slate-700/80 mx-1 self-center" aria-hidden="true"></div>
 
-                <div class="space-y-0.5">
-                  <!-- Dashboard -->
-                  <a
-                    :href="getUrl('/inertia/dashboard')"
-                    @click="handleNav('/inertia/dashboard', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="!isSpa && activeNav === 'dashboard' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="!isSpa && activeNav === 'dashboard' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white'">
-                      <LayoutDashboard class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="text-xs font-semibold leading-tight">Dashboard</div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">Metrik ECharts & Statistik</div>
-                    </div>
-                  </a>
-
-                  <!-- MapLibre (Demo Only) -->
-                  <a
-                    v-if="appMode === 'demo'"
-                    :href="getUrl('/inertia/map-demo')"
-                    @click="handleNav('/inertia/map-demo', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="!isSpa && activeNav === 'map' ? 'bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="!isSpa && activeNav === 'map' ? 'bg-teal-600 text-white shadow-sm' : 'bg-teal-100 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 group-hover:bg-teal-600 group-hover:text-white'">
-                      <Compass class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-semibold leading-tight">Peta (MapLibre)</span>
-                        <span class="text-[9px] px-1 py-0.2 rounded bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-mono">Demo</span>
-                      </div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">Visualisasi geospasial interaktif</div>
-                    </div>
-                  </a>
-
-                  <!-- Produk / Katalog Data -->
-                  <a
-                    :href="getUrl('/inertia/products')"
-                    @click="handleNav('/inertia/products', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="!isSpa && activeNav === 'products' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="!isSpa && activeNav === 'products' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white'">
-                      <Package class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="text-xs font-semibold leading-tight">
-                        {{ appMode === 'production' ? 'Katalog Data' : 'Produk (Inertia)' }}
-                      </div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">CRUD server-driven & pagination</div>
-                    </div>
-                  </a>
-
-                  <!-- Audit Trail -->
-                  <a
-                    :href="getUrl('/audit-logs')"
-                    @click="handleNav('/audit-logs', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="!isSpa && activeNav === 'audit' ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="!isSpa && activeNav === 'audit' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-indigo-600 group-hover:text-white'">
-                      <History class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="text-xs font-semibold leading-tight">Audit Trail</div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">Catatan aktivitas & log sistem</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </Transition>
-          </div>
-
-          <!-- Visual Divider between Inertia Bridge & SPA Mode -->
-          <div v-if="appMode === 'demo' || isSpa" class="h-4 w-[1px] bg-slate-300 dark:bg-slate-700/80 mx-1 self-center" aria-hidden="true"></div>
-
-          <!-- 2. Vue 3 SPA Dropdown (Shown in Demo mode or when active in SPA) -->
-          <div v-if="appMode === 'demo' || isSpa" class="relative" ref="spaDropdownRef">
-            <button
-              type="button"
-              @click="toggleSpaDropdown"
-              class="px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer font-medium select-none"
-              :class="[
-                isSpaActive 
-                  ? 'bg-emerald-100 dark:bg-emerald-600/20 text-emerald-800 dark:text-emerald-300 font-semibold ring-1 ring-emerald-300 dark:ring-emerald-500/40' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
-                spaDropdownOpen ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : ''
-              ]"
-              :aria-expanded="spaDropdownOpen"
-              aria-haspopup="true"
-            >
-              <div class="w-1.5 h-1.5 rounded-full" :class="isSpaActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400/60 dark:bg-slate-600'"></div>
-              <span>SPA Mode</span>
-              <ChevronDown class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': spaDropdownOpen }" />
-            </button>
-
-            <!-- SPA Dropdown Menu -->
-            <Transition
-              enter-active-class="transition duration-150 ease-out"
-              enter-from-class="transform opacity-0 scale-95 -translate-y-1"
-              enter-to-class="transform opacity-100 scale-100 translate-y-0"
-              leave-active-class="transition duration-100 ease-in"
-              leave-from-class="transform opacity-100 scale-100 translate-y-0"
-              leave-to-class="transform opacity-0 scale-95 -translate-y-1"
-            >
-              <div
-                v-if="spaDropdownOpen"
-                class="absolute left-0 mt-2 w-72 bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl p-2 z-50 text-slate-800 dark:text-slate-200 ring-1 ring-black/5 dark:ring-white/5"
-              >
-                <div class="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800/80 mb-1 flex items-center justify-between">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-mono">
-                    Vue 3 SPA Stack
-                  </span>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 font-mono">
-                    Client Router
-                  </span>
-                </div>
-
-                <div class="space-y-0.5">
-                  <!-- SPA Home -->
-                  <a
-                    :href="getUrl('/spa')"
-                    @click="handleNav('/spa', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="isSpa && activeNav === 'home' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="isSpa && activeNav === 'home' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'">
-                      <Layers class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="text-xs font-semibold leading-tight">SPA Home</div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">Vue Router instant client shell</div>
-                    </div>
-                  </a>
-
-                  <!-- SPA Produk -->
-                  <a
-                    :href="getUrl('/spa/products')"
-                    @click="handleNav('/spa/products', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="isSpa && activeNav === 'products' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="isSpa && activeNav === 'products' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'">
-                      <Package class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="text-xs font-semibold leading-tight">SPA Produk</div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">Pinia store & REST API fetching</div>
-                    </div>
-                  </a>
-
-                  <!-- API Explorer -->
-                  <a
-                    :href="getUrl('/spa/api-explorer')"
-                    @click="handleNav('/spa/api-explorer', $event)"
-                    class="flex items-center gap-3 p-2 rounded-xl transition-all group cursor-pointer"
-                    :class="isSpa && activeNav === 'api-explorer' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'"
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                      :class="isSpa && activeNav === 'api-explorer' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-cyan-100 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 group-hover:bg-cyan-600 group-hover:text-white'">
-                      <Compass class="w-4 h-4" />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <div class="text-xs font-semibold leading-tight font-mono">API Explorer</div>
-                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">Pengujian endpoint & Sanctum token</div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </Transition>
-          </div>
+          <!-- SPA Mode link -->
+          <a
+            :href="getUrl('/spa')"
+            @click="handleNav('/spa', $event)"
+            class="px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer font-medium select-none"
+            :class="isSpa ? 'bg-emerald-100 dark:bg-emerald-600/20 text-emerald-800 dark:text-emerald-300 font-semibold ring-1 ring-emerald-300 dark:ring-emerald-500/40' : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'"
+          >
+            <div class="w-1.5 h-1.5 rounded-full" :class="isSpa ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400/60 dark:bg-slate-600'"></div>
+            <span>SPA Mode</span>
+          </a>
 
           <!-- Auto-Generated Scramble API Docs -->
           <a :href="getUrl('/docs/api')" target="_blank"
@@ -636,12 +407,8 @@ const handleLogout = () => {
           </a>
         </nav>
 
-        <!-- Right Side: Mode Switcher, Theme Switcher, Notifications, User Profile & Logout -->
+        <!-- Right Side: Theme Switcher, Notifications, User Profile & Logout -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <!-- Interactive App Mode Switcher (Demo vs Production - shown on 480px+) -->
-          <div class="hidden min-[480px]:block">
-            <AppModeSwitcher />
-          </div>
 
           <!-- 3-Way Theme Switcher (Dark / Light / System) -->
           <ThemeSwitcher />
@@ -742,18 +509,6 @@ const handleLogout = () => {
                     <Radio class="w-6 h-6 text-slate-400 dark:text-slate-600 mx-auto mb-2 opacity-50" />
                     <p>Belum ada notifikasi baru.</p>
                   </div>
-                </div>
-
-                <!-- Quick Action: Trigger Demo Broadcast -->
-                <div class="mt-2.5 pt-2.5 border-t border-slate-200 dark:border-slate-800 shrink-0">
-                  <button
-                    type="button"
-                    @click="sendDemoNotification"
-                    class="w-full py-2 px-3 rounded-xl text-xs font-semibold bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 border border-cyan-200 dark:border-cyan-800/60 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
-                  >
-                    <Sparkles class="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                    <span>⚡ Kirim Notifikasi Demo (WebSocket)</span>
-                  </button>
                 </div>
               </div>
             </Transition>

@@ -1,23 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
-import ProductsView from '../views/ProductsView.vue';
-import ApiExplorerView from '../views/ApiExplorerView.vue';
 
 const routes = [
   {
     path: '/',
     name: 'spa-home',
     component: HomeView,
-  },
-  {
-    path: '/products',
-    name: 'spa-products',
-    component: ProductsView,
-  },
-  {
-    path: '/api-explorer',
-    name: 'spa-api-explorer',
-    component: ApiExplorerView,
   },
 ];
 
