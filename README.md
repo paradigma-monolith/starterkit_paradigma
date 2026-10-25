@@ -208,6 +208,20 @@ Audit trail akan otomatis mencatat seluruh perubahan data pengguna ke tabel `act
 
 ---
 
+## 🌐 Panduan Deploy & Konfigurasi Server Produksi
+
+Panduan langkah demi langkah untuk melakukan deploy ke server produksi (Ubuntu 22.04/24.04 LTS, Nginx, SSL Let's Encrypt, Supervisor, dan Crontab) telah disediakan secara lengkap di:
+👉 **[DEPLOYMENT.md](DEPLOYMENT.md)**
+
+Berkas konfigurasi siap pakai yang telah disertakan:
+- **Nginx Reverse Proxy & WSS:** [`deploy/nginx/app.conf`](deploy/nginx/app.conf)
+- **Supervisor WebSocket Reverb:** [`deploy/supervisor/starterkit-reverb.conf`](deploy/supervisor/starterkit-reverb.conf)
+- **Supervisor Queue Worker:** [`deploy/supervisor/starterkit-worker.conf`](deploy/supervisor/starterkit-worker.conf)
+- **Supervisor Octane RoadRunner:** [`deploy/supervisor/starterkit-octane.conf`](deploy/supervisor/starterkit-octane.conf)
+- **Automated Deployment Script:** [`deploy/deploy.sh`](deploy/deploy.sh)
+
+---
+
 ## 📜 Lisensi
 
 Proyek ini dilisensikan di bawah [MIT License](LICENSE).
