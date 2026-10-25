@@ -457,8 +457,13 @@
                 </tr>
                 <tr>
                     <td><strong>BAB 9</strong></td>
-                    <td><a href="#bab-9"><strong>Katalog REST API, OpenAPI Scramble, &amp; Checklist Rilis</strong></a><br>Tabel rute REST API lengkap, Scramble OpenAPI GUI, pengujian otomatis, &amp; panduan deployment.</td>
+                    <td><a href="#bab-9"><strong>Katalog REST API, OpenAPI Scramble, &amp; Testing Suite</strong></a><br>Tabel rute REST API lengkap, Scramble OpenAPI GUI, dan verifikasi 56 tests passed.</td>
                     <td style="text-align: right;"><a href="#bab-9">Buka Bab 9 &rarr;</a></td>
+                </tr>
+                <tr>
+                    <td><strong>BAB 10</strong></td>
+                    <td><a href="#bab-10"><strong>Panduan Deployment Produksi &amp; Konfigurasi Server</strong></a><br>Arsitektur Ubuntu LEMP, Nginx WSS reverse proxy, Supervisor daemon, &amp; deploy.sh.</td>
+                    <td style="text-align: right;"><a href="#bab-10">Buka Bab 10 &rarr;</a></td>
                 </tr>
             </tbody>
         </table>
@@ -496,8 +501,8 @@
                 </tr>
                 <tr>
                     <td><strong>DevOps / Sysadmin</strong></td>
-                    <td>Bab 2 (Prasyarat), Bab 3 (4 Servers), Bab 8 (Pulse), Bab 9 (Checklist)</td>
-                    <td>Menyiapkan deployment Octane, Reverb, Redis, Nginx, &amp; backup.</td>
+                    <td>Bab 2 (Prasyarat), Bab 3 (4 Servers), Bab 8 (Pulse), Bab 10 (Deploy)</td>
+                    <td>Menyiapkan deployment Nginx WSS, Supervisor, Redis, SSL, &amp; backup.</td>
                 </tr>
             </tbody>
         </table>
@@ -1337,6 +1342,116 @@ php artisan test</pre>
             <li><strong>Supervisor Queue &amp; Reverb:</strong> Pasang konfigurasi proses supervisor untuk menjaga servis worker antrean dan Reverb tetap berjalan di background.</li>
             <li><strong>Penjadwalan Otomatis:</strong> Pasang entri cron job Laravel di server (<code class="inline">* * * * * php /path-to-app/artisan schedule:run >> /dev/null 2>&1</code>) untuk menjalankan backup berkala.</li>
         </ol>
+
+        <div style="margin-top: 25px; text-align: center; color: #94a3b8; font-size: 8.5px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+            Dokumen Manual Book ini diterbitkan secara otomatis oleh <strong>Paradigma Monolith Ecosystem</strong> &bull; Dilisensikan di bawah Lisensi MIT.
+        </div>
+    </div>
+
+    <!-- ==================== BAB 10: DEPLOYMENT SERVER ==================== -->
+    <div id="bab-10" class="chapter-container">
+        <div class="section-header">
+            <div class="section-title">BAB 10: PANDUAN DEPLOYMENT PRODUKSI &amp; KONFIGURASI SERVER</div>
+            <div class="section-desc">Instalasi Linux LEMP, Reverse Proxy Nginx WSS, Supervisor Daemon, &amp; Otomasi Rilis</div>
+        </div>
+
+        <h3>10.1 Arsitektur Server Linux Produksi (Ubuntu 22.04 / 24.04 LTS)</h3>
+        <p>
+            Aplikasi menggunakan tumpukan <strong>LEMP Stack Terpadu</strong> yang dilengkapi dengan server WebSocket mandiri (Laravel Reverb), cache performa tinggi (Redis), dan antrean asinkron (Supervisor):
+        </p>
+
+        <div class="diagram-container">
+[CLIENT BROWSER] ──HTTPS (443) / WSS (443/app)──> [NGINX REVERSE PROXY]
+                                                        │
+                      ┌─────────────────────────────────┴─────────────────────────────────┐
+                      │ Pass /index.php                                                   │ Pass /app/* (WSS)
+                      ▼                                                                   ▼
+       [PHP-FPM / LARAVEL 12]                                              [LARAVEL REVERB DAEMON]
+       - Inertia.js Bridge &amp; Traditional SPA                               - WebSockets Engine (Port 8080)
+       - Sanctum Cookie SSO Auth                                           - Managed by Supervisor
+                      │                                                                   │
+                      └─────────────────────────────────┬─────────────────────────────────┘
+                                                        ▼
+                                       [INFRASTRUCTURE &amp; DATA LAYER]
+                                       - MySQL 8.0: Database transaksi utama
+                                       - Redis 7.x: Session Driver, Cache, &amp; Queue
+                                       - Supervisor: Queue Worker (2 proses latar belakang)
+                                       - Crontab: Laravel Scheduler &amp; Spatie Backup
+        </div>
+
+        <h3>10.2 Konfigurasi Web Server Nginx &amp; Reverse Proxy WebSockets</h3>
+        <p>
+            Berkas konfigurasi resmi telah disediakan di berkas <code class="inline">deploy/nginx/app.conf</code>. Bagian krusial untuk koneksi WebSocket WSS aman melalui port 443 adalah blok direktif berikut:
+        </p>
+        <pre># Reverse Proxy WebSocket Laravel Reverb (WSS Port 443)
+location /app/ {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+}
+
+# FastCGI Handler PHP 8.2+
+location ~ \.php$ {
+    fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+    include fastcgi_params;
+}</pre>
+
+        <h3>10.3 Manajemen Daemon Latar Belakang (Supervisor)</h3>
+        <p>
+            Supervisor memastikan server WebSocket Reverb dan background queue worker selalu hidup 24/7 di latar belakang. Konfigurasi telah tersedia di <code class="inline">deploy/supervisor/</code>:
+        </p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 28%;">Nama Berkas Supervisor</th>
+                    <th style="width: 42%;">Perintah Daemon yang Dijalankan</th>
+                    <th style="width: 30%;">Tanggung Jawab Operasional</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code class="inline">starterkit-reverb.conf</code></td>
+                    <td><code class="inline">php artisan reverb:start --port=8080</code></td>
+                    <td>Menjaga server WebSocket aktif terus-menerus.</td>
+                </tr>
+                <tr>
+                    <td><code class="inline">starterkit-worker.conf</code></td>
+                    <td><code class="inline">php artisan queue:work redis --sleep=3</code></td>
+                    <td>Memproses background jobs, email, dan ekspor data.</td>
+                </tr>
+                <tr>
+                    <td><code class="inline">starterkit-octane.conf</code></td>
+                    <td><code class="inline">php artisan octane:start --server=roadrunner</code></td>
+                    <td>Worker super cepat (opsional pengganti PHP-FPM).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>10.4 Penjadwalan Otomatis (Crontab) &amp; Script Otomasi Rilis</h3>
+        <p>
+            Tambahkan penjadwalan Laravel pada crontab pengguna web server (<code class="inline">sudo crontab -u www-data -e</code>):
+        </p>
+        <pre>* * * * * cd /var/www/starterkit_paradigma &amp;&amp; php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</pre>
+
+        <p>
+            Untuk merilis pembaruan versi baru dari GitHub ke server produksi, jalankan script otomasi satu baris bawaan di <code class="inline">deploy/deploy.sh</code>:
+        </p>
+        <pre># Eksekusi deployment zero-downtime otomatis:
+sudo /var/www/starterkit_paradigma/deploy/deploy.sh</pre>
+
+        <div class="callout callout-info">
+            <div class="callout-title">Panduan Lengkap Terintegrasi</div>
+            Dokumentasi instalasi server dari awal (Ubuntu 22.04 LTS, MySQL, Redis, firewall UFW, dan instalasi sertifikat SSL gratis via Certbot Let's Encrypt) dapat Anda pelajari secara komprehensif pada dokumen repositori <a href="https://github.com/paradigma-monolith/starterkit_paradigma/blob/main/DEPLOYMENT.md" target="_blank">DEPLOYMENT.md ↗</a>.
+        </div>
 
         <div style="margin-top: 25px; text-align: center; color: #94a3b8; font-size: 8.5px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
             Dokumen Manual Book ini diterbitkan secara otomatis oleh <strong>Paradigma Monolith Ecosystem</strong> &bull; Dilisensikan di bawah Lisensi MIT.
