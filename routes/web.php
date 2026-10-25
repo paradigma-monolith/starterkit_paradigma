@@ -84,7 +84,11 @@ Route::middleware('auth')->group(function () {
                 'avatar_url' => $user->avatar_url,
                 'roles' => $user->getRoleNames(),
                 'permissions' => $user->getAllPermissions()->pluck('name'),
+                'is_impersonating' => app('impersonate')->isImpersonating(),
             ] : null,
         ]);
     })->where('any', '.*')->name('spa');
+
+    // User Impersonation Routes (/impersonate/take/{id} & /impersonate/leave)
+    Route::impersonate();
 });

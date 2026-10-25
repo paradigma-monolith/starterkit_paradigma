@@ -38,12 +38,21 @@ Aplikasi ini menggabungkan dua paradigma frontend Vue 3 dalam satu backend Larav
 - **Audit Trail & Activity Log**: `spatie/laravel-activitylog` v4 (Terekam di model `User` & modul kustom)
 - **Interactive OpenAPI Documentation**: `dedoc/scramble` (`/docs/api`)
 - **Dokumen & Spreadsheet Export**: `maatwebsite/excel` (Excel/CSV) + `barryvdh/laravel-dompdf` (PDF)
+- **Mesin Pencarian Teks Penuh (Full-Text Search)**: Laravel Scout v11 (`laravel/scout`) - Terkoneksi ke Command Palette (`Ctrl+K`)
+- **Server-Side Query Builder**: Spatie QueryBuilder v6 (`spatie/laravel-query-builder`) - Standarisasi filtering, sorting, & pagination REST API
+- **Komponen Tabel Data Enterprise**: `BaseDataTable.vue` - Mendukung pagination, multi-column sort, pencarian, & custom cell slots
+- **Standarisasi Waktu & Tanggal Lokal**: Day.js (`dayjs`) via composable `useDate.js` (Locale Indonesia `id` & *relativeTime*)
+- **User Impersonation**: `lab404/laravel-impersonate` - Super Admin dapat berpindah akun user lain dengan safety warning banner
+- **Manajemen Berkas & Lampiran**: Spatie MediaLibrary v11 (`spatie/laravel-medialibrary`) - Konversi gambar WebP otomatis & multi-koleksi
+- **Otomatisasi Backup Sistem**: Spatie Laravel Backup v9 (`spatie/laravel-backup`) - Pencadangan database MySQL & storage
+- **Headless UI Primitives & Command Palette**: Reka UI (`reka-ui`) + `CommandPalette.vue` (`Ctrl+K` / `Cmd+K`)
+- **Modern Notification Toasts**: Vue Sonner (`vue-sonner`) - Toast melayang responsif dark mode & real-time audio chime
 - **Mesin Visualisasi Grafik**: Apache ECharts 6 (`BaseChart.vue`) - Reaktif terhadap Dark/Light Mode
 - **Mesin Geospasial / Peta**: MapLibre GL 6 (`BaseMap.vue`) - Mendukung layer 3D, marker interaktif, & tema auto
 - **In-Memory Cache & Data Store**: Redis (`predis/predis` v3.7 + `Illuminate\Support\Facades\Redis`)
 - **High-Performance Application Engine**: Laravel Octane + RoadRunner (`laravel/octane` + `rr.exe`)
 - **Real-Time WebSockets**: Laravel Reverb + Laravel Echo (`laravel/reverb` + `laravel-echo` + `pusher-js`)
-- **Application Health & Telemetri**: Laravel Pulse (`laravel/pulse`)
+- **Application Health & Telemetri**: Laravel Pulse (`laravel/pulse`) - Memantau query lambat, antrean queue, & resource sistem
 - **Error Tracking & Monitoring**: Sentry Full-Stack (`sentry/sentry-laravel` + `@sentry/vue`)
 
 ---
@@ -157,6 +166,34 @@ const markers = [
 
 <template>
   <BaseMap :markers="markers" height="480px" />
+</template>
+```
+
+#### Tabel Data Enterprise ([BaseDataTable.vue](resources/js/Components/BaseDataTable.vue))
+```vue
+<script setup>
+import BaseDataTable from '@/Components/BaseDataTable.vue';
+import { useDate } from '@/composables/useDate';
+
+const { formatDate } = useDate();
+
+const columns = [
+  { key: 'name', label: 'Nama Pengguna', sortable: true },
+  { key: 'email', label: 'Email', sortable: true },
+  { key: 'created_at', label: 'Terdaftar Sejak', sortable: true },
+];
+
+const users = [
+  { id: 1, name: 'Admin', email: 'admin@hybrid.local', created_at: '2026-10-25' }
+];
+</script>
+
+<template>
+  <BaseDataTable :columns="columns" :data="users" :clientSide="true">
+    <template #cell(created_at)="{ value }">
+      {{ formatDate(value) }}
+    </template>
+  </BaseDataTable>
 </template>
 ```
 

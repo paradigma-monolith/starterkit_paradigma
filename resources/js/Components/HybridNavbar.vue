@@ -18,11 +18,14 @@ import {
   Layers,
   Package,
   Home,
-  X
+  X,
+  Search
 } from 'lucide-vue-next';
 import AdminSidebar from './AdminSidebar.vue';
 import FloatingChat from './FloatingChat.vue';
 import ThemeSwitcher from './ThemeSwitcher.vue';
+import CommandPalette from './CommandPalette.vue';
+import { Toaster } from 'vue-sonner';
 
 const props = defineProps({
   mode: {
@@ -185,6 +188,12 @@ const currentUser = computed(() => {
 // Sidebar Drawer State
 const sidebarOpen = ref(false);
 
+// Global Command Palette State
+const commandPaletteRef = ref(null);
+const openCommandPalette = () => {
+  commandPaletteRef.value?.open();
+};
+
 // Real-Time Notifications State
 const unreadCount = ref(0);
 const notifications = ref([]);
@@ -335,6 +344,17 @@ const handleLogout = () => {
 
 <template>
   <header class="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/85 dark:bg-slate-950/85 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-300">
+    <!-- User Impersonation Alert Banner -->
+    <div v-if="currentUser?.is_impersonating" class="bg-amber-500 text-slate-950 font-medium text-xs px-4 py-1.5 flex items-center justify-between shadow-xs">
+      <div class="flex items-center gap-2">
+        <span class="inline-block animate-bounce">⚠️</span>
+        <span>Anda sedang login sebagai <strong>{{ currentUser.name }}</strong> (Mode Impersonasi)</span>
+      </div>
+      <a :href="getUrl('/impersonate/leave')" class="px-2.5 py-0.5 rounded-md bg-slate-950 text-white text-[11px] font-semibold hover:bg-slate-800 transition-colors">
+        Kembali ke Super Admin ✕
+      </a>
+    </div>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <!-- Sidebar Trigger & Brand -->
@@ -409,6 +429,18 @@ const handleLogout = () => {
 
         <!-- Right Side: Theme Switcher, Notifications, User Profile & Logout -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+
+          <!-- Command Palette Trigger Button (Ctrl + K) -->
+          <button
+            type="button"
+            @click="openCommandPalette"
+            class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs border border-slate-200 dark:border-slate-800 transition-all cursor-pointer"
+            title="Buka Command Palette (Ctrl+K)"
+          >
+            <Search class="w-3.5 h-3.5 text-slate-400" />
+            <span class="hidden md:inline text-[11px] font-medium">Cari...</span>
+            <kbd class="hidden md:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md text-slate-400 shadow-2xs">Ctrl K</kbd>
+          </button>
 
           <!-- 3-Way Theme Switcher (Dark / Light / System) -->
           <ThemeSwitcher />
@@ -598,4 +630,10 @@ const handleLogout = () => {
 
   <!-- Real-Time Floating Chat strictly at Bottom-Right -->
   <FloatingChat :mode="mode" />
+
+  <!-- Global Command Palette Modal (Ctrl + K) -->
+  <CommandPalette ref="commandPaletteRef" :mode="mode" />
+
+  <!-- Vue Sonner Global Rich Toasts -->
+  <Toaster position="top-right" richColors />
 </template>

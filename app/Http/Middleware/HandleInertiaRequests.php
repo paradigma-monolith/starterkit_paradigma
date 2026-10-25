@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                     'avatar_url' => $request->user()->avatar_url,
                     'roles' => $request->user()->getRoleNames(),
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+                    'is_impersonating' => app('impersonate')->isImpersonating(),
                 ] : null,
             ],
             'architecture' => [

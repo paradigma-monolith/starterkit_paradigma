@@ -1,0 +1,66 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class MediaIntegrationTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_unauthenticated_user_cannot_upload_media(): void
+    {
+        Storage::fake('public');
+        $file = UploadedFile::fake()->image('test-avatar.jpg');
+
+        $response = $this->postJson('/api/v1/media/upload', [
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_authenticated_user_can_upload_and_retrieve_media(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+
+        $file = UploadedFile::fake()->create('sample-document.pdf', 200, 'application/pdf');
+
+        $uploadResponse = $this->actingAs($user, 'sanctum')->postJson('/api/v1/media/upload', [
+            'file' => $file,
+            'collection' => 'documents',
+        ]);
+
+        $uploadResponse->assertStatus(201);
+        $uploadResponse->assertJsonStructure([
+            'message',
+            'media' => [
+                'id',
+                'name',
+                'file_name',
+                'mime_type',
+                'size',
+                'url',
+                'collection',
+            ],
+        ]);
+
+        $this->assertEquals(1, $user->fresh()->getMedia('documents')->count());
+
+        // Test listing media
+        $listResponse = $this->actingAs($user, 'sanctum')->getJson('/api/v1/media?collection=documents');
+        $listResponse->assertStatus(200);
+        $listResponse->assertJsonCount(1, 'media');
+
+        // Test deleting media
+        $mediaId = $uploadResponse->json('media.id');
+        $deleteResponse = $this->actingAs($user, 'sanctum')->deleteJson("/api/v1/media/{$mediaId}");
+        $deleteResponse->assertStatus(200);
+        $this->assertEquals(0, $user->fresh()->getMedia('documents')->count());
+    }
+}

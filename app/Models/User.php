@@ -10,14 +10,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Lab404\Impersonate\Models\Impersonate;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, LogsActivity, InteractsWithMedia, Searchable, Impersonate;
 
     /**
      * The attributes that are mass assignable.
@@ -96,5 +101,46 @@ class User extends Authenticatable
     public function loginHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(LoginHistory::class)->latest('login_at');
+    }
+
+    /**
+     * Register media conversions for Spatie MediaLibrary.
+     */
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(150)
+            ->height(150)
+            ->nonQueued();
+    }
+
+    /**
+     * Get the indexable data array for Laravel Scout full-text search.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (int) $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+        ];
+    }
+
+    /**
+     * Determine if user can impersonate other users.
+     */
+    public function canImpersonate(): bool
+    {
+        return $this->hasRole('Super Admin');
+    }
+
+    /**
+     * Determine if user can be impersonated.
+     */
+    public function canBeImpersonated(): bool
+    {
+        return ! $this->hasRole('Super Admin');
     }
 }

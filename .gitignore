@@ -28,6 +28,9 @@ frankenphp
 frankenphp-worker.php
 rr
 .rr.yaml
+composer.phar
  
 rr.exe
 *.exe
+rr
+.rr.yaml

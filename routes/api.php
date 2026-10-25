@@ -41,5 +41,16 @@ Route::prefix('v1')->group(function () {
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+
+        // Laravel Scout Global Search
+        Route::get('/search', [\App\Http\Controllers\Api\GlobalSearchController::class, 'index']);
+
+        // Spatie MediaLibrary Endpoints
+        Route::get('/media', [\App\Http\Controllers\Api\MediaApiController::class, 'index']);
+        Route::post('/media/upload', [\App\Http\Controllers\Api\MediaApiController::class, 'upload']);
+        Route::delete('/media/{id}', [\App\Http\Controllers\Api\MediaApiController::class, 'destroy']);
+
+        // Spatie QueryBuilder Resource Example (Paginated & Filtered Users)
+        Route::get('/users', [\App\Http\Controllers\Api\UsersApiController::class, 'index']);
     });
 });
