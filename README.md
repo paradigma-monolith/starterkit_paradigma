@@ -25,6 +25,40 @@ Aplikasi ini menggabungkan dua paradigma frontend Vue 3 dalam satu backend Larav
 
 ---
 
+## ⚡ Panduan Instalasi Cepat (Git Clone)
+
+Pastikan sistem Anda telah terpasang **PHP 8.2+**, **Composer**, **Node.js LTS (v20+)**, dan **MySQL 8.0**.
+
+```bash
+# 1. Kloning repositori resmi dari GitHub
+git clone https://github.com/paradigma-monolith/starterkit_paradigma.git
+cd starterkit_paradigma
+
+# 2. Salin berkas lingkungan
+cp .env.example .env
+
+# 3. Pasang seluruh dependensi PHP dan Node.js
+composer install
+npm install
+
+# 4. Generate Application Key & Storage Symlink
+php artisan key:generate
+php artisan storage:link
+
+# 5. Konfigurasi kredensial MySQL di .env, lalu jalankan migrasi & seeder
+php artisan migrate --seed
+
+# 6. Jalankan server lokal
+# Terminal 1 (Backend):
+php artisan serve
+# Terminal 2 (Vite HMR Frontend):
+npm run dev
+# Terminal 3 (Opsional - WebSockets Reverb):
+php artisan reverb:start
+```
+
+---
+
 ## 🛠️ Stack Teknologi Lengkap (Preserved & Ready)
 
 - **Backend Framework**: Laravel 12.x / PHP 8.2+

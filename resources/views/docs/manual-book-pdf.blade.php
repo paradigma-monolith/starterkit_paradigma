@@ -594,7 +594,7 @@
         </ul>
 
         <h3>1.4 Anatomi Struktur Direktori Terorganisir</h3>
-        <pre>c:\Program Files\Ampps\www\starterkit_paradigma/
+        <pre>starterkit_paradigma/  (Hasil git clone repositori GitHub)
 ├── app/
 │   ├── Exports/                     # Handler ekspor multi-format (AuditLogsExport.php)
 │   ├── Http/
@@ -790,8 +790,9 @@
         </div>
 
         <h3>3.1 Langkah demi Langkah Instalasi Awal (Setup 1 Kali)</h3>
-        <pre># 1. Masuk ke direktori root proyek
-cd "c:\Program Files\Ampps\www\starterkit_paradigma"
+        <pre># 1. Kloning Repositori Resmi dari GitHub &amp; Masuk ke Folder Proyek
+git clone https://github.com/paradigma-monolith/starterkit_paradigma.git
+cd starterkit_paradigma
 
 # 2. Salin berkas konfigurasi template lingkungan .env
 cp .env.example .env
