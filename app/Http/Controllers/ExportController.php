@@ -50,7 +50,7 @@ class ExportController extends Controller
             'generatedAt' => now(),
         ])
         ->setPaper('a4', 'portrait')
-        ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true]);
+        ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
 
         return $pdf->download('MANUAL_BOOK_STARTERKIT_PARADIGMA.pdf');
     }

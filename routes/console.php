@@ -19,7 +19,7 @@ Artisan::command('docs:generate-pdf', function () {
         'generatedAt' => now(),
     ])
     ->setPaper('a4', 'portrait')
-    ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true]);
+    ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
 
     $publicPath = public_path('docs/MANUAL_BOOK_STARTERKIT_PARADIGMA.pdf');
     $rootPath = base_path('MANUAL_BOOK_STARTERKIT_PARADIGMA.pdf');
