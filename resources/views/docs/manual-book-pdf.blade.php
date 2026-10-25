@@ -1426,7 +1426,7 @@ location ~ \.php$ {
                 </tr>
                 <tr>
                     <td><code class="inline">starterkit-worker.conf</code></td>
-                    <td><code class="inline">php artisan queue:work redis --sleep=3</code></td>
+                    <td><code class="inline">php artisan queue:work --sleep=3</code></td>
                     <td>Memproses background jobs, email, dan ekspor data.</td>
                 </tr>
                 <tr>
