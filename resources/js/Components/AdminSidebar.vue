@@ -22,9 +22,7 @@ import {
   Pin,
   PinOff,
   ShieldCheck,
-  FileSpreadsheet,
-  FlaskConical,
-  Rocket
+  FileSpreadsheet
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -366,37 +364,6 @@ const navSections = computed(() => {
         </div>
       </div>
 
-      <!-- App Mode Quick Switcher Strip in Sidebar -->
-      <div class="px-3 py-2 border-t border-slate-200 dark:border-slate-800/80 bg-slate-100/60 dark:bg-slate-900/40">
-        <div v-if="!isCollapsed" class="flex items-center justify-between text-[11px]">
-          <div class="flex items-center gap-1.5 font-medium" :class="appMode === 'demo' ? 'text-purple-600 dark:text-purple-400' : 'text-emerald-600 dark:text-emerald-400'">
-            <component :is="appMode === 'demo' ? FlaskConical : Rocket" class="w-3.5 h-3.5" />
-            <span>{{ appMode === 'demo' ? 'Mode Demo' : 'Mode Produksi' }}</span>
-          </div>
-          <button
-            type="button"
-            @click="toggleMode"
-            class="text-[10px] font-mono px-2 py-0.5 rounded-md border cursor-pointer hover:scale-105 transition-all"
-            :class="appMode === 'demo'
-              ? 'bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
-              : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'"
-            title="Klik untuk beralih mode"
-          >
-            Beralih ⇄
-          </button>
-        </div>
-        <div v-else class="flex justify-center">
-          <button
-            type="button"
-            @click="toggleMode"
-            class="p-1 rounded-lg transition-all cursor-pointer"
-            :class="appMode === 'demo' ? 'text-purple-500 hover:bg-purple-100 dark:hover:bg-purple-900/40' : 'text-emerald-500 hover:bg-emerald-100 dark:hover:bg-emerald-900/40'"
-            :title="`Beralih Mode (Saat ini: ${appMode === 'demo' ? 'Demo' : 'Produksi'})`"
-          >
-            <component :is="appMode === 'demo' ? FlaskConical : Rocket" class="w-4 h-4" />
-          </button>
-        </div>
-      </div>
 
       <!-- Sidebar Footer: User Profile & Quick Logout -->
       <div class="p-3 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/90 dark:bg-slate-950/90">
