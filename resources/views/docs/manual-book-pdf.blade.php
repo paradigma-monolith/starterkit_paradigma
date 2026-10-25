@@ -5,22 +5,22 @@
     <title>Manual Book - Enterprise Hybrid Starter Kit</title>
     <style>
         @page {
-            margin: 42px 48px;
+            margin: 32px 42px 36px 42px;
         }
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             color: #1e293b;
-            font-size: 10.5px;
-            line-height: 1.55;
+            font-size: 10px;
+            line-height: 1.5;
         }
 
-        /* Running Header & Footers */
+        /* Running Header */
         .running-header {
             position: fixed;
-            top: -28px;
+            top: -24px;
             left: 0;
             right: 0;
-            height: 18px;
+            height: 16px;
             border-bottom: 1px solid #cbd5e1;
             font-size: 8px;
             color: #64748b;
@@ -33,94 +33,93 @@
             color: #4f46e5;
         }
 
-        /* Cover Page */
+        /* Cover Page - Strict 1 Page Height */
         .cover {
             text-align: center;
-            padding-top: 60px;
+            padding-top: 20px;
             page-break-after: always;
         }
         .cover-tagline {
             display: inline-block;
             background-color: #e0e7ff;
             color: #3730a3;
-            padding: 5px 16px;
+            padding: 4px 14px;
             border-radius: 999px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 800;
             letter-spacing: 1px;
             text-transform: uppercase;
-            margin-bottom: 25px;
+            margin-bottom: 16px;
             border: 1px solid #c7d2fe;
         }
         .cover-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             color: #0f172a;
             line-height: 1.25;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             letter-spacing: -0.5px;
         }
         .cover-subtitle {
-            font-size: 12px;
+            font-size: 11px;
             color: #475569;
-            max-width: 520px;
-            margin: 0 auto 30px auto;
-            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto 18px auto;
+            line-height: 1.5;
         }
         .cover-accent {
-            width: 90px;
-            height: 4px;
-            background: linear-gradient(to right, #4f46e5, #06b6d4);
+            width: 70px;
+            height: 3px;
             background-color: #4f46e5;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 20px auto;
             border-radius: 2px;
         }
         .cover-cards {
-            margin: 25px auto 40px auto;
-            width: 90%;
+            margin: 12px auto 20px auto;
+            width: 92%;
             border-collapse: collapse;
         }
         .cover-card-td {
             width: 33.33%;
-            padding: 8px;
+            padding: 6px;
             vertical-align: top;
         }
         .cover-card {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px 10px;
+            border-radius: 6px;
+            padding: 10px 8px;
             text-align: center;
         }
         .cover-card-num {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
             color: #4f46e5;
         }
         .cover-card-label {
-            font-size: 9px;
+            font-size: 8.5px;
             font-weight: 700;
             color: #64748b;
             text-transform: uppercase;
             margin-top: 2px;
         }
         .cover-meta-table {
-            width: 85%;
+            width: 92%;
             margin: 0 auto;
             border-collapse: collapse;
-            font-size: 10px;
+            font-size: 9.5px;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 6px;
             background-color: #ffffff;
         }
         .cover-meta-table td {
-            padding: 7px 12px;
+            padding: 5px 10px;
             border-bottom: 1px solid #f1f5f9;
         }
         .cover-meta-label {
             font-weight: 700;
             color: #475569;
-            width: 35%;
+            width: 32%;
             background-color: #f8fafc;
         }
         .cover-meta-val {
@@ -128,46 +127,46 @@
             font-weight: 500;
         }
 
-        /* Typography & Headings */
-        .page-break {
-            page-break-before: always;
-        }
+        /* Typography & Natural Flow Headings */
         .section-header {
             border-bottom: 2px solid #4f46e5;
-            padding-bottom: 6px;
-            margin-top: 20px;
-            margin-bottom: 14px;
+            padding-bottom: 5px;
+            margin-top: 18px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
         }
         .section-title {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 900;
             color: #1e1b4b;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
         .section-desc {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #64748b;
-            margin-top: 2px;
+            margin-top: 1px;
         }
         h3 {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
             color: #0f172a;
-            margin-top: 14px;
-            margin-bottom: 6px;
+            margin-top: 12px;
+            margin-bottom: 5px;
             border-left: 3px solid #4f46e5;
-            padding-left: 8px;
+            padding-left: 7px;
+            page-break-after: avoid;
         }
         h4 {
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
             color: #334155;
-            margin-top: 10px;
+            margin-top: 8px;
             margin-bottom: 4px;
+            page-break-after: avoid;
         }
         p {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-align: justify;
         }
 
@@ -181,15 +180,16 @@
             text-decoration: underline;
         }
 
-        /* Tables */
+        /* Tables with page-break protection */
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0 14px 0;
-            font-size: 9.5px;
+            margin: 8px 0 12px 0;
+            font-size: 9px;
+            page-break-inside: avoid;
         }
         table.data-table th, table.data-table td {
-            padding: 6px 8px;
+            padding: 5px 7px;
             border: 1px solid #e2e8f0;
             text-align: left;
             vertical-align: top;
@@ -199,7 +199,7 @@
             color: #1e293b;
             font-weight: 800;
             text-transform: uppercase;
-            font-size: 8.5px;
+            font-size: 8px;
             letter-spacing: 0.4px;
         }
         table.data-table tr:nth-child(even) td {
@@ -209,97 +209,95 @@
         /* Pill Badges */
         .badge {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 1.5px 5px;
             border-radius: 4px;
-            font-size: 8px;
+            font-size: 7.5px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.3px;
         }
         .badge-get { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .badge-post { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
         .badge-patch { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
         .badge-delete { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .badge-tech { background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
-        .badge-active { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 
         /* Code Blocks */
         pre {
             background-color: #0f172a;
             color: #f8fafc;
-            padding: 9px 12px;
-            border-radius: 6px;
+            padding: 7px 10px;
+            border-radius: 5px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 9px;
-            line-height: 1.45;
-            margin: 8px 0 12px 0;
+            font-size: 8.5px;
+            line-height: 1.4;
+            margin: 6px 0 10px 0;
             page-break-inside: avoid;
             border: 1px solid #1e293b;
         }
         code.inline {
             background-color: #f1f5f9;
             color: #4f46e5;
-            padding: 1px 4px;
+            padding: 1px 3px;
             border-radius: 3px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 9px;
+            font-size: 8.5px;
             border: 1px solid #e2e8f0;
         }
 
         /* Callout Boxes */
         .callout {
-            padding: 9px 12px;
-            border-radius: 6px;
-            margin: 10px 0;
-            font-size: 10px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            margin: 8px 0;
+            font-size: 9.5px;
             page-break-inside: avoid;
         }
         .callout-info {
             background-color: #eff6ff;
-            border-left: 4px solid #3b82f6;
+            border-left: 3px solid #3b82f6;
             color: #1e40af;
         }
         .callout-success {
             background-color: #f0fdf4;
-            border-left: 4px solid #10b981;
+            border-left: 3px solid #10b981;
             color: #065f46;
         }
         .callout-warning {
             background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            border-left: 3px solid #f59e0b;
             color: #92400e;
         }
         .callout-purple {
             background-color: #faf5ff;
-            border-left: 4px solid #a855f7;
+            border-left: 3px solid #a855f7;
             color: #6b21a8;
         }
         .callout-title {
             font-weight: 800;
             margin-bottom: 2px;
-            font-size: 10.5px;
+            font-size: 9.5px;
         }
 
         /* Architecture Diagram Boxes */
         .diagram-container {
             background-color: #f8fafc;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 12px 0;
+            border-radius: 6px;
+            padding: 8px;
+            margin: 8px 0;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 8.5px;
-            line-height: 1.35;
+            font-size: 8px;
+            line-height: 1.3;
             page-break-inside: avoid;
         }
 
         /* Lists */
         ul, ol {
-            margin: 4px 0 10px 16px;
+            margin: 3px 0 8px 14px;
             padding: 0;
         }
         li {
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
     </style>
 </head>
@@ -308,13 +306,12 @@
     <!-- DOMPDF DYNAMIC CANVAS FOOTER (True Page Numbers) -->
     <script type="text/php">
     if (isset($pdf)) {
-        // Footer Text and Page Numbers
         $text = "Halaman {PAGE_NUM} dari {PAGE_COUNT}";
         $font = $fontMetrics->get_font("Helvetica", "normal");
         $size = 8;
         $color = array(0.4, 0.45, 0.53);
-        $pdf->page_text(485, 805, $text, $font, $size, $color);
-        $pdf->page_text(48, 805, "Paradigma Monolith Starter Kit - Manual Book Resmi (Laravel 12 + Vue 3)", $font, $size, $color);
+        $pdf->page_text(485, 810, $text, $font, $size, $color);
+        $pdf->page_text(42, 810, "Paradigma Monolith Starter Kit - Manual Book Resmi (Laravel 12 + Vue 3)", $font, $size, $color);
     }
     </script>
 
@@ -324,7 +321,7 @@
         <span class="running-header-right">PANDUAN PENGEMBANGAN SISTEM</span>
     </div>
 
-    <!-- ==================== COVER PAGE ==================== -->
+    <!-- ==================== COVER PAGE (PAGE 1) ==================== -->
     <div class="cover">
         <div class="cover-tagline">Dokumentasi Arsitektur Resmi &bull; Edisi 2026</div>
         <div class="cover-title">
@@ -346,7 +343,7 @@
                 <td class="cover-card-td">
                     <div class="cover-card">
                         <div class="cover-card-num">22+</div>
-                        <div class="cover-card-label">Enterprise Tech Stack</div>
+                        <div class="cover-card-label">Enterprise Tools</div>
                     </div>
                 </td>
                 <td class="cover-card-td">
@@ -384,7 +381,7 @@
                 <td class="cover-meta-val"><a href="http://127.0.0.1:8000" target="_blank">http://127.0.0.1:8000 ↗</a> (Dev Server Port: 5173)</td>
             </tr>
             <tr>
-                <td class="cover-meta-label">Tanggal Diterbitkan:</td>
+                <td class="cover-meta-label">Tanggal Terbit:</td>
                 <td class="cover-meta-val">{{ date('d F Y') }}</td>
             </tr>
             <tr>
@@ -394,9 +391,8 @@
         </table>
     </div>
 
-    <!-- ==================== DAFTAR ISI INTERAKTIF ==================== -->
-    <div class="page-break"></div>
-    <div class="section-header">
+    <!-- ==================== PAGE 2: DAFTAR ISI INTERAKTIF ==================== -->
+    <div class="section-header" style="margin-top: 5px;">
         <div class="section-title">DAFTAR ISI INTERAKTIF</div>
         <div class="section-desc">Klik pada judul bab untuk melompat langsung ke halaman topik yang dituju</div>
     </div>
@@ -404,9 +400,9 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 14%;">Bab</th>
-                <th style="width: 66%;">Pokok Bahasan &amp; Modul</th>
-                <th style="width: 20%; text-align: right;">Aksi Cepat</th>
+                <th style="width: 12%;">Bab</th>
+                <th style="width: 70%;">Pokok Bahasan &amp; Modul</th>
+                <th style="width: 18%; text-align: right;">Aksi Cepat</th>
             </tr>
         </thead>
         <tbody>
@@ -461,14 +457,13 @@
     <div class="callout callout-purple">
         <div class="callout-title">Tautan Layanan Interaktif Lokal</div>
         Saat aplikasi sedang berjalan, Anda dapat mengklik tautan berikut untuk membuka layanan terkait secara langsung:<br>
-        &bull; <strong>Aplikasi Utama / Login:</strong> <a href="http://127.0.0.1:8000/login" target="_blank">http://127.0.0.1:8000/login ↗</a><br>
+        &bull; <strong>Aplikasi Utama / Login:</strong> <a href="http://127.0.0.1:8000/login" target="_blank">http://127.0.0.1:8000/login ↗</a> &nbsp;|&nbsp; 
         &bull; <strong>Interactive Scramble OpenAPI:</strong> <a href="http://127.0.0.1:8000/docs/api" target="_blank">http://127.0.0.1:8000/docs/api ↗</a><br>
-        &bull; <strong>Laravel Pulse Health Dashboard:</strong> <a href="http://127.0.0.1:8000/pulse" target="_blank">http://127.0.0.1:8000/pulse ↗</a><br>
-        &bull; <strong>Repositori GitHub Resmi:</strong> <a href="https://github.com/paradigma-monolith/starterkit_paradigma" target="_blank">https://github.com/paradigma-monolith/starterkit_paradigma ↗</a>
+        &bull; <strong>Laravel Pulse Telemetry:</strong> <a href="http://127.0.0.1:8000/pulse" target="_blank">http://127.0.0.1:8000/pulse ↗</a> &nbsp;|&nbsp; 
+        &bull; <strong>Repositori GitHub Resmi:</strong> <a href="https://github.com/paradigma-monolith/starterkit_paradigma" target="_blank">paradigma-monolith/starterkit_paradigma ↗</a>
     </div>
 
-    <!-- ==================== BAB 1 ==================== -->
-    <div class="page-break"></div>
+    <!-- ==================== BAB 1 (FLOWS NATURALLY) ==================== -->
     <div id="bab-1" class="section-header">
         <div class="section-title">BAB 1: GAMBARAN UMUM &amp; ARSITEKTUR HYBRID MONOLITH</div>
         <div class="section-desc">Pondasi Dual-Paradigma Antarmuka dalam Satu Backend Terpadu</div>
@@ -544,7 +539,6 @@
 └── routes/                          # web.php, api.php, channels.php, console.php</pre>
 
     <!-- ==================== BAB 2 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-2" class="section-header">
         <div class="section-title">BAB 2: MATRIKS 22+ TEKNOLOGI &amp; PERSYARATAN SISTEM</div>
         <div class="section-desc">Katalog Lengkap Seluruh Pustaka &amp; Mesin yang Terintegrasi</div>
@@ -553,9 +547,9 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 25%;">Teknologi &amp; Paket</th>
-                <th style="width: 15%;">Lapisan / Versi</th>
-                <th style="width: 40%;">Tanggung Jawab &amp; Peran Sistem</th>
+                <th style="width: 24%;">Teknologi &amp; Paket</th>
+                <th style="width: 14%;">Lapisan / Versi</th>
+                <th style="width: 42%;">Tanggung Jawab &amp; Peran Sistem</th>
                 <th style="width: 20%;">Berkas Konfigurasi</th>
             </tr>
         </thead>
@@ -696,10 +690,9 @@
     </table>
 
     <!-- ==================== BAB 3 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-3" class="section-header">
         <div class="section-title">BAB 3: INSTALASI CEPAT &amp; OPERASIONAL SERVER</div>
-        <div class="section-subtitle">Menyiapkan Lingkungan Pengembangan dan Menjalankan Servis</div>
+        <div class="section-desc">Menyiapkan Lingkungan Pengembangan dan Menjalankan Servis</div>
     </div>
 
     <h3>3.1 Persyaratan Lingkungan (Environment Prerequisites)</h3>
@@ -729,7 +722,7 @@ php artisan migrate:fresh --seed</pre>
 
     <h3>3.3 Menjalankan Servis Aplikasi (Multi-Process Server)</h3>
     <p>Untuk menjalankan seluruh fitur interaktif (Backend, Frontend HMR, WebSockets, dan Telemetri):</p>
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 25%;">Layanan</th>
@@ -768,10 +761,9 @@ php artisan migrate:fresh --seed</pre>
     </div>
 
     <!-- ==================== BAB 4 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-4" class="section-header">
         <div class="section-title">BAB 4: TUTORIAL MENAMBAH HALAMAN BARU</div>
-        <div class="section-subtitle">Alur Pengembangan Fitur Baru pada Inertia Bridge dan SPA</div>
+        <div class="section-desc">Alur Pengembangan Fitur Baru pada Inertia Bridge dan SPA</div>
     </div>
 
     <h3>4.1 Menambahkan Modul Baru di Inertia.js Bridge</h3>
@@ -846,10 +838,9 @@ onMounted(async () => {
     </ol>
 
     <!-- ==================== BAB 5 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-5" class="section-header">
         <div class="section-title">BAB 5: KEAMANAN, RBAC, AUDIT TRAIL, &amp; IMPERSONASI</div>
-        <div class="section-subtitle">Manajemen Akses Enterprise dan Keselamatan Operasional</div>
+        <div class="section-desc">Manajemen Akses Enterprise dan Keselamatan Operasional</div>
     </div>
 
     <h3>5.1 Otorisasi Berbasis Peran (Spatie Laravel Permission)</h3>
@@ -889,10 +880,9 @@ $logs = \Spatie\Activitylog\Models\Activity::where('causer_id', auth()->id())
     </ul>
 
     <!-- ==================== BAB 6 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-6" class="section-header">
         <div class="section-title">BAB 6: KATALOG KOMPONEN UI &amp; INTERAKTIVITAS</div>
-        <div class="section-subtitle">Komponen Reusable Siap Pakai yang Responsif Tema Gelap &amp; Terang</div>
+        <div class="section-desc">Komponen Reusable Siap Pakai yang Responsif Tema Gelap &amp; Terang</div>
     </div>
 
     <h3>6.1 Tabel Data Enterprise (BaseDataTable.vue)</h3>
@@ -944,10 +934,9 @@ toast.error('Gagal memproses permintaan.');</pre>
     </ul>
 
     <!-- ==================== BAB 7 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-7" class="section-header">
         <div class="section-title">BAB 7: LAYANAN DATA, PENCARIAN, &amp; BERKAS</div>
-        <div class="section-subtitle">Integrasi Media, Full-Text Search, QueryBuilder, &amp; Backup</div>
+        <div class="section-desc">Integrasi Media, Full-Text Search, QueryBuilder, &amp; Backup</div>
     </div>
 
     <h3>7.1 Manajemen Berkas &amp; Lampiran (Spatie MediaLibrary)</h3>
@@ -987,7 +976,6 @@ php artisan backup:run --only-db
 php artisan backup:clean</pre>
 
     <!-- ==================== BAB 8 & 9 ==================== -->
-    <div class="page-break"></div>
     <div id="bab-8" class="section-header">
         <div class="section-title">BAB 8: REAL-TIME WEBSOCKETS &amp; TELEMETRI</div>
         <div class="section-desc">Pusat Komunikasi Dua Arah &amp; Pemantauan Performa Server</div>
@@ -1018,7 +1006,7 @@ window.Echo.private(`chat.${roomId}`)
     </ul>
 
     <!-- BAB 9 -->
-    <div id="bab-9" style="margin-top: 30px;" class="section-header">
+    <div id="bab-9" class="section-header">
         <div class="section-title">BAB 9: KATALOG API ENDPOINTS &amp; CHECKLIST RILIS</div>
         <div class="section-desc">Katalog REST API Siap Pakai &amp; Standarisasi Deployment Produksi</div>
     </div>
@@ -1109,7 +1097,7 @@ APP_URL=https://aplikasianda.com</pre>
         </li>
     </ol>
 
-    <div style="margin-top: 35px; text-align: center; color: #94a3b8; font-size: 9.5px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+    <div style="margin-top: 25px; text-align: center; color: #94a3b8; font-size: 8.5px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
         Dokumen ini diterbitkan secara otomatis oleh <strong>Paradigma Monolith Ecosystem</strong> &bull; Dilisensikan di bawah Lisensi MIT.
     </div>
 
