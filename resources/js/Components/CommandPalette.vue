@@ -103,6 +103,14 @@ const defaultActions = [
     action: () => window.open(getUrl('/pulse'), '_blank'),
   },
   {
+    id: 'nav-manual-book',
+    title: 'Unduh Manual Book (PDF)',
+    subtitle: 'Buku panduan teknis pengembangan sistem lengkap format PDF',
+    category: 'Dokumentasi',
+    icon: BookOpen,
+    action: () => window.open(getUrl('/docs/manual-book/download'), '_blank'),
+  },
+  {
     id: 'act-theme',
     title: 'Toggle Tema (Dark / Light)',
     subtitle: 'Beralih tampilan antara tema gelap dan terang',

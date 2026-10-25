@@ -40,4 +40,18 @@ class ExportController extends Controller
 
         return $pdf->download('audit-logs-' . date('Y-m-d') . '.pdf');
     }
+
+    /**
+     * Download or stream the comprehensive Manual Book PDF.
+     */
+    public function exportManualBookPdf(): Response
+    {
+        $pdf = Pdf::loadView('docs.manual-book-pdf', [
+            'generatedAt' => now(),
+        ])
+        ->setPaper('a4', 'portrait')
+        ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true]);
+
+        return $pdf->download('MANUAL_BOOK_STARTERKIT_PARADIGMA.pdf');
+    }
 }

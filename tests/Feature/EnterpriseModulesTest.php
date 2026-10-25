@@ -103,6 +103,11 @@ class EnterpriseModulesTest extends TestCase
         $pdfResponse = $this->actingAs($user)->get('/exports/audit-logs/pdf');
         $pdfResponse->assertStatus(200);
         $this->assertEquals('application/pdf', $pdfResponse->headers->get('content-type'));
+
+        // Manual Book Documentation PDF
+        $manualBookResponse = $this->actingAs($user)->get('/docs/manual-book/download');
+        $manualBookResponse->assertStatus(200);
+        $this->assertEquals('application/pdf', $manualBookResponse->headers->get('content-type'));
     }
 
     public function test_notification_flow_and_mark_all_read(): void

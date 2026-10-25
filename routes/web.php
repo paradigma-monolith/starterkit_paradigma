@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/pdf', [ExportController::class, 'exportPdf'])->name('pdf');
     });
 
+    // Manual Book Documentation PDF Download
+    Route::get('/docs/manual-book/download', [ExportController::class, 'exportManualBookPdf'])->name('docs.manual-book.download');
+
     // In-App & Real-Time Notifications (Reverb WebSocket Powered)
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
